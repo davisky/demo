@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>网页授权初始页面</title>
+    <link href="https://cdn.bootcss.com/layer/3.0.2/mobile/need/layer.min.css" rel="stylesheet">
+
+</head>
+<body>
+<script src="https://cdn.bootcss.com/jquery/1.11.3/jquery.min.js"></script>
+<script type="application/javascript">
+    var path = window.location.origin;
+
+    $.ajax({
+        url:path+"/weixin/oauth2buildAuthorizationUrl",
+        type:"GET",
+        data:{"redirectURI":path+"/oauthjump.html",scope:"snsapi_userinfo",state:"test"},
+        dataType:"text",
+        success:function(netData){
+
+            window.location.href =  netData;
+        }
+    });
+
+</script>
+</body>
+</html>

@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>返回页面</title>
+</head>
+<body>
+<table>
+    <tr>
+        <td>openid</td>
+        <td id="openid"></td>
+    </tr>
+    <tr>
+        <td>nickname</td>
+        <td id="nickname"></td>
+    </tr>
+    <tr>
+        <td>sex</td>
+        <td id="sex"></td>
+    </tr>
+    <tr>
+        <td>province</td>
+        <td id="province"></td>
+    </tr>
+    <tr>
+        <td>city</td>
+        <td id="city"></td>
+    </tr>
+    <tr>
+        <td>country</td>
+        <td id="country"></td>
+    </tr>
+    <tr>
+        <td>headimgurl</td>
+        <td ><img id="headimgurl"></td>
+    </tr>
+</table>
+<script src="https://cdn.bootcss.com/jquery/1.11.3/jquery.min.js"></script>
+<script src="https://cdn.bootcss.com/layer/3.0.2/layer.min.js"></script>
+<script TYPE="application/javascript">
+    function getRequest() {
+        var url = location.search; //获取url中"?"符后的字串
+        var theRequest = new Object();
+        if (url.indexOf("?") != -1) {
+            var str = url.substr(1);
+            strs = str.split("&");
+            for(var i = 0; i < strs.length; i ++) {
+                theRequest[strs[i].split("=")[0]]=decodeURIComponent(strs[i].split("=")[1]);
+            }
+        }
+        return theRequest;
+    }
+    var path = window.location.origin;
+    var code = getRequest()['code'];
+    $.ajax({
+        url:path+"/weixin/oauth2getAccessToken",
+        type:"get",
+        data:{"code":code},
+        dataType:"json",
+        success:function(netData){
+
+             var openid = netData.openid;
+             var access_token=netData.access_token;
+
+            $.ajax({
+                url:path+"/weixin/oauth2getUserinfo",
+                type:"get",
+                data:{"openId":openid,"accessToken":access_token},
+                dataType:"json",
+                success:function(netData2){
+                    $("#openid").text(netData2.openid);
+                    $("#nickname").text(netData2.nickname);
+                    $("#sex").text(netData2.sex==1?"男":(netData2.sex==2?"女":"未知"));
+                    $("#province").text(netData2.province);
+                    $("#city").text(netData2.city);
+                    $("#country").text(netData2.country);
+                    $("#headimgurl").attr("src",netData2.headimgurl);
+
+                }
+            });
+        }
+    });
+</script>
+</body>
+</html>
